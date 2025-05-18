@@ -8,6 +8,8 @@ Filename format: LN LastName YYYY Short Title.md
 """
 
 import bibtexparser
+from bibtexparser.bparser import BibTexParser
+from bibtexparser.customization import homogenize_latex_encoding
 import os
 import re
 from pathlib import Path
