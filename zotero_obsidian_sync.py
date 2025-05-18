@@ -16,11 +16,11 @@ from pathlib import Path
 from slugify import slugify  # pip install python-slugify
 import logging
 from datetime import datetime
+import argparse
 
 # --- CONFIGURABLE OPTIONS ---
 VAULT_DIR = Path("/home/dan/wealtheow/LN Literature Notes")  # Change this to your Obsidian LN dir
 BIB_FILE = Path("/home/dan/zoterobib/My Library.bib")     # Change this to your Better BibTeX export
-DRY_RUN = False  # Set to True to preview which files would be written
 
 # --- UTILITY FUNCTIONS ---
 def get_filename(entry):
@@ -107,10 +107,17 @@ logging.basicConfig(
 
 # --- MAIN SCRIPT ---
 def main():
+    parser = argparse.ArgumentParser(description="Export Zotero BibTeX entries to Obsidian Markdown.")
+    parser.add_argument("--dry-run", action="store_true", help="Preview output without writing files.")
+    args = parser.parse_args()
+    dry_run = args.dry_run
+
     with open(BIB_FILE, encoding='utf-8') as bibtex_file:
         parser = BibTexParser(common_strings=False)
 #        parser.customization = homogenize_latex_encoding # temporarily disabled to prevent crash
         bib_database = bibtexparser.load(bibtex_file, parser=parser)
+    count_written = 0
+    failed = []
     for entry in bib_database.entries:
         try:
             filename = get_filename(entry)
@@ -123,15 +130,22 @@ def main():
             logging.info(f"Writing: {filename}")
             markdown = generate_markdown(entry)
 
-            if not DRY_RUN:
+            if not dry_run:
                 with open(output_path, "w", encoding="utf-8") as f:
                     f.write(markdown)
 
             count_written += 1
 
-
         except Exception as e:
-            logging.error(f"Error processing entry {entry.get('ID', 'unknown')}: {e}")
+            entry_id = entry.get('ID', 'unknown')
+            logging.error(f"Error processing entry {entry_id}: {e}")
+            failed.append(entry_id)
+    if failed:
+        logging.warning(f"{len(failed)} entries failed to write:")
+        for entry_id in failed:
+            logging.warning(f" - {entry_id}")
+
+
 
 if __name__ == "__main__":
     main()
