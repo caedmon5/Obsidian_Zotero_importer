@@ -15,7 +15,7 @@ from slugify import slugify  # pip install python-slugify
 
 # --- CONFIGURABLE OPTIONS ---
 VAULT_DIR = Path("/home/dan/wealtheow/LN Literature Notes")  # Change this to your Obsidian LN dir
-BIB_FILE = Path("/home/dan/zoterobib/bibliography.bib")     # Change this to your Better BibTeX export
+BIB_FILE = Path("/home/dan/zoterobib/My Library.bib")     # Change this to your Better BibTeX export
 
 # --- UTILITY FUNCTIONS ---
 def get_filename(entry):
@@ -76,7 +76,9 @@ def generate_markdown(entry):
 # --- MAIN SCRIPT ---
 def main():
     with open(BIB_FILE, encoding='utf-8') as bibtex_file:
-        bib_database = bibtexparser.load(bibtex_file)
+        parser = BibTexParser(common_strings=False)
+        parser.customization = homogenize_latex_encoding
+        bib_database = bibtexparser.load(bibtex_file, parser=parser)
 
     for entry in bib_database.entries:
         filename = get_filename(entry)
