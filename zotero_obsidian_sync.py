@@ -79,7 +79,7 @@ def generate_markdown(entry):
 def main():
     with open(BIB_FILE, encoding='utf-8') as bibtex_file:
         parser = BibTexParser(common_strings=False)
-        parser.customization = homogenize_latex_encoding
+#        parser.customization = homogenize_latex_encoding # temporarily disabled to prevent crash
         bib_database = bibtexparser.load(bibtex_file, parser=parser)
 
     for entry in bib_database.entries:
