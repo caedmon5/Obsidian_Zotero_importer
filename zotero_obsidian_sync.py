@@ -14,10 +14,13 @@ import os
 import re
 from pathlib import Path
 from slugify import slugify  # pip install python-slugify
+import logging
+from datetime import datetime
 
 # --- CONFIGURABLE OPTIONS ---
 VAULT_DIR = Path("/home/dan/wealtheow/LN Literature Notes")  # Change this to your Obsidian LN dir
 BIB_FILE = Path("/home/dan/zoterobib/My Library.bib")     # Change this to your Better BibTeX export
+DRY_RUN = False  # Set to True to preview which files would be written
 
 # --- UTILITY FUNCTIONS ---
 def get_filename(entry):
@@ -91,25 +94,41 @@ def generate_markdown(entry):
         md += f"- Online: {entry['url']}\n"
     return md
 
+# --- LOGGING SETUP ---
+logfile = Path(__file__).parent / "sync.log"
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler(logfile, mode="a", encoding="utf-8"),
+        logging.StreamHandler()
+    ]
+)
+
 # --- MAIN SCRIPT ---
 def main():
     with open(BIB_FILE, encoding='utf-8') as bibtex_file:
         parser = BibTexParser(common_strings=False)
 #        parser.customization = homogenize_latex_encoding # temporarily disabled to prevent crash
         bib_database = bibtexparser.load(bibtex_file, parser=parser)
-
-    for entry in bib_database.entries:
+for entry in bib_database.entries:
+    try:
         filename = get_filename(entry)
         output_path = VAULT_DIR / filename
 
         if output_path.exists():
-            print(f"Skipping existing: {filename}")
+            logging.info(f"Skipping existing: {filename}")
             continue
 
+        logging.info(f"Writing: {filename}")
         markdown = generate_markdown(entry)
-        with open(output_path, "w", encoding="utf-8") as f:
-            f.write(markdown)
-            print(f"Written: {filename}")
+
+        if not DRY_RUN:
+            with open(output_path, "w", encoding="utf-8") as f:
+                f.write(markdown)
+
+    except Exception as e:
+        logging.error(f"Error processing entry {entry.get('ID', 'unknown')}: {e}")
 
 if __name__ == "__main__":
     main()
