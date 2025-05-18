@@ -24,7 +24,11 @@ def get_filename(entry):
     author_last = entry.get("author", "Anon").split(" and ")[0].split()[-1]
     year = entry.get("year", "n.d.")
     title = entry.get("title", "untitled")
-    short_title = " ".join(title.strip("{}()").split()[:4])
+
+    # Remove curly braces and other unsafe characters
+    title_clean = title.replace("{", "").replace("}", "").replace("/", "-").replace("\\", "-")
+    short_title = " ".join(title_clean.strip("()").split()[:4])
+
     return f"LN {author_last} {year} {short_title}.md"
 
 def chicago_citation(entry):
