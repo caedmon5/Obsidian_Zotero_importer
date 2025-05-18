@@ -70,7 +70,7 @@ def chicago_citation(entry):
     return " ".join(parts)
 
 def yaml_block(entry):
-return f"""---
+    return f"""---
 citekey: "{entry.get('ID', '')}"
 type: "{entry.get('ENTRYTYPE', '')}"
 autoupdate: true
