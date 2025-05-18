@@ -127,6 +127,12 @@ def main():
                 with open(output_path, "w", encoding="utf-8") as f:
                     f.write(markdown)
 
+
+
+        # ❌ MISSING this line:
+        count_written += 1
+
+
     except Exception as e:
         logging.error(f"Error processing entry {entry.get('ID', 'unknown')}: {e}")
 
