@@ -118,9 +118,14 @@ def main():
 #        parser.customization = homogenize_latex_encoding # temporarily disabled to prevent crash
         bib_database = bibtexparser.load(bibtex_file, parser=parser)
     count_written = 0
+    MAX_ENTRIES = 5  # or however many you'd like to test
     failed = []
     for entry in bib_database.entries:
         try:
+            if count_written >= MAX_ENTRIES and not dry_run
+                logging.info("Reached max entry limit for test run.")
+                break
+
             filename = get_filename(entry)
             output_path = VAULT_DIR / filename
 
