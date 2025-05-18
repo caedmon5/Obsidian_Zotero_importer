@@ -22,13 +22,25 @@ BIB_FILE = Path("/home/dan/zoterobib/My Library.bib")     # Change this to your 
 # --- UTILITY FUNCTIONS ---
 def get_filename(entry):
     author_last = entry.get("author", "Anon").split(" and ")[0].split()[-1]
-    year = entry.get("year", "n.d.")
+    year = entry.get("year", "n.d.").split("T")[0]  # Trim timestamp if present
     title = entry.get("title", "untitled")
 
-    # Remove curly braces and other unsafe characters
-    title_clean = title.replace("{", "").replace("}", "").replace("/", "-").replace("\\", "-")
-    short_title = " ".join(title_clean.strip("()").split()[:4])
+    # Sanitize filename to remove or replace unsafe characters
+    title_clean = (
+        title.replace("{", "")
+             .replace("}", "")
+             .replace("/", "-")
+             .replace("\\", "-")
+             .replace(":", "-")
+             .replace("*", "")
+             .replace("?", "")
+             .replace("\"", "")
+             .replace("<", "")
+             .replace(">", "")
+             .replace("|", "")
+    )
 
+    short_title = " ".join(title_clean.strip("()[]").split()[:4])
     return f"LN {author_last} {year} {short_title}.md"
 
 def chicago_citation(entry):
