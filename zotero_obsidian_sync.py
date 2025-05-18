@@ -110,8 +110,10 @@ logging.basicConfig(
 def main():
     parser = argparse.ArgumentParser(description="Export Zotero BibTeX entries to Obsidian Markdown.")
     parser.add_argument("--dry-run", action="store_true", help="Preview output without writing files.")
+    parser.add_argument("--limit", type=int, default=None, help="Limit the number of entries to process")
     args = parser.parse_args()
     dry_run = args.dry_run
+    entry_limit = args.limit
 
     with open(BIB_FILE, encoding='utf-8') as bibtex_file:
         parser = BibTexParser(common_strings=False)
@@ -122,8 +124,8 @@ def main():
     failed = []
     for entry in bib_database.entries:
         try:
-            if count_written >= MAX_ENTRIES and not dry_run
-                logging.info("Reached max entry limit for test run.")
+            if entry_limit is not None and count_written >= entry_limit and not dry_run:
+                logging.info("Reached entry limit. Stopping early.")
                 break
 
             filename = get_filename(entry)
