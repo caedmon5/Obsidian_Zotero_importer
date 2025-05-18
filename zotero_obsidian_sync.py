@@ -111,21 +111,21 @@ def main():
         parser = BibTexParser(common_strings=False)
 #        parser.customization = homogenize_latex_encoding # temporarily disabled to prevent crash
         bib_database = bibtexparser.load(bibtex_file, parser=parser)
-for entry in bib_database.entries:
-    try:
-        filename = get_filename(entry)
-        output_path = VAULT_DIR / filename
+    for entry in bib_database.entries:
+        try:
+            filename = get_filename(entry)
+            output_path = VAULT_DIR / filename
 
-        if output_path.exists():
-            logging.info(f"Skipping existing: {filename}")
-            continue
+            if output_path.exists():
+                logging.info(f"Skipping existing: {filename}")
+                continue
 
-        logging.info(f"Writing: {filename}")
-        markdown = generate_markdown(entry)
+            logging.info(f"Writing: {filename}")
+            markdown = generate_markdown(entry)
 
-        if not DRY_RUN:
-            with open(output_path, "w", encoding="utf-8") as f:
-                f.write(markdown)
+            if not DRY_RUN:
+                with open(output_path, "w", encoding="utf-8") as f:
+                    f.write(markdown)
 
     except Exception as e:
         logging.error(f"Error processing entry {entry.get('ID', 'unknown')}: {e}")
