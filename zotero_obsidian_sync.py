@@ -14,8 +14,8 @@ from pathlib import Path
 from slugify import slugify  # pip install python-slugify
 
 # --- CONFIGURABLE OPTIONS ---
-VAULT_DIR = Path("/path/to/your/obsidian/vault/LN")  # Change this to your Obsidian LN dir
-BIB_FILE = Path("/path/to/your/bibliography.bib")     # Change this to your Better BibTeX export
+VAULT_DIR = Path("/home/dan/wealtheow/LN Literature Notes")  # Change this to your Obsidian LN dir
+BIB_FILE = Path("/home/dan/zoterobib/bibliography.bib")     # Change this to your Better BibTeX export
 
 # --- UTILITY FUNCTIONS ---
 def get_filename(entry):
