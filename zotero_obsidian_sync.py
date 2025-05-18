@@ -70,9 +70,10 @@ def chicago_citation(entry):
     return " ".join(parts)
 
 def yaml_block(entry):
-    return f"""---
+return f"""---
 citekey: "{entry.get('ID', '')}"
 type: "{entry.get('ENTRYTYPE', '')}"
+autoupdate: true
 ---
 """
 
@@ -123,16 +124,26 @@ def main():
             filename = get_filename(entry)
             output_path = VAULT_DIR / filename
 
+            preserved = ""
+            split_marker = "<!-- Content below this line is not updated by Zotero -->"
             if output_path.exists():
-                logging.info(f"Skipping existing: {filename}")
-                continue
+                with open(output_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                    if "autoupdate: true" not in content:
+                        logging.info(f"Skipping existing (no autoupdate): {filename}")
+                        continue
+                    if split_marker in content:
+                        preserved = content.split(split_marker, 1)[1]
+                    else:
+                        logging.warning(f"Missing preservation marker in {filename}; overwriting entire file.")
+
 
             logging.info(f"Writing: {filename}")
             markdown = generate_markdown(entry)
 
             if not dry_run:
                 with open(output_path, "w", encoding="utf-8") as f:
-                    f.write(markdown)
+                    f.write(markdown + preserved)
 
             count_written += 1
 
