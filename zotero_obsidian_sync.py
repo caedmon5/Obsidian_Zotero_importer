@@ -151,6 +151,11 @@ def main():
             logging.info(f"Writing: {filename}")
             markdown = generate_markdown(entry)
 
+            if dry_run:
+                logging.info(f"(Dry run) Would write: {filename}")
+            else:
+                logging.info(f"Writing: {filename}")
+
             if not dry_run:
                 with open(output_path, "w", encoding="utf-8") as f:
                     f.write(markdown + preserved)
