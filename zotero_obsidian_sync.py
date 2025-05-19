@@ -83,11 +83,14 @@ def generate_markdown(entry):
     md += chicago_citation(entry) + "\n\n"
     md += "# Abstract\n"
     md += entry.get("abstract", "") + "\n\n"
-    md += "# Keywords\n"
+    md += "# Keywords (Zotero)\n"
     keywords = entry.get("keywords", "")
     md += ", ".join(f"[[{kw.strip()}]]" for kw in keywords.split(",")) + "\n\n"
+    md += "<!-- Do not edit above this line: all changes in Zotero -->\n"
+    md += "<!-- Content below this line is not updated by Zotero -->\n\n"
+    md += "# Keywords (Obsidian)\n"
     md += "# Notes\n"
-    md += "<!-- BEGIN NOTEMARKER -->\nYour notes here.\n<!-- END NOTEMARKER -->\n\n"
+    md += "\n\n\n"
     md += "# Related Files and URLs\n"
     if 'file' in entry:
         md += f"- Attached: {entry['file']}\n"
